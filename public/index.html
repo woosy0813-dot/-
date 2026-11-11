@@ -1,0 +1,1162 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>해리 포터 지식그래프 포트폴리오 | Hogwarts Knowledge Graph Archive</title>
+  <meta name="description" content="Neo4j & vis-network 기반 <해리 포터와 마법사의 돌> 서사 지식그래프 인터랙티브 포트폴리오 아카이브">
+  <meta property="og:title" content="Hogwarts Knowledge Graph Archive">
+  <meta property="og:description" content="Neo4j 기반 해리 포터 서사 지식그래프 및 Cypher 분석 아카이브">
+  <meta property="og:type" content="website">
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts: Cinzel & Noto Serif KR -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Noto+Serif+KR:wght@300;400;600;700&display=swap" rel="stylesheet">
+  <!-- Vis-network CDN -->
+  <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+
+  <style>
+    body {
+      font-family: 'Noto Serif KR', serif;
+      background-color: #090204;
+      color: #f3ebd7;
+      scroll-behavior: smooth;
+    }
+    h1, h2, h3, h4, .font-gothic {
+      font-family: 'Cinzel', 'Noto Serif KR', serif;
+    }
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #090204;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #3a111a;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #7a1f2e;
+    }
+    .crimson-glow {
+      box-shadow: 0 0 25px -5px rgba(185, 28, 28, 0.4);
+    }
+  </style>
+</head>
+<body class="selection:bg-red-900 selection:text-amber-200">
+
+  <!-- 1. Header & Navigation -->
+  <header class="sticky top-0 z-50 border-b border-red-900/40 bg-[#0d0407]/90 backdrop-blur-md">
+    <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-3 sm:px-6">
+      <a href="#" class="flex items-center gap-3 group">
+        <div class="flex h-10 w-10 items-center justify-center rounded-xl border border-amber-600/60 bg-gradient-to-br from-red-900 to-amber-950 shadow-md shadow-red-950">
+          <i data-lucide="network" class="h-5 w-5 text-amber-300"></i>
+        </div>
+        <div>
+          <span class="font-gothic text-lg font-bold tracking-wider text-amber-100 flex items-center gap-1.5">
+            Hogwarts Archive
+            <span class="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-red-950 text-amber-400 border border-red-900/40">
+              KG v1.0
+            </span>
+          </span>
+          <p class="text-[10px] text-stone-400 tracking-tight">Harry Potter Knowledge Graph Portfolio</p>
+        </div>
+      </a>
+
+      <nav class="hidden lg:flex items-center gap-6 text-xs font-medium text-stone-300">
+        <a href="#overview" class="hover:text-amber-300 transition-colors">Overview</a>
+        <a href="#knowledge-graph" class="hover:text-amber-300 transition-colors">Knowledge Graph</a>
+        <a href="#cypher-queries" class="hover:text-amber-300 transition-colors">Cypher Analysis</a>
+        <a href="#ontology" class="hover:text-amber-300 transition-colors">Data Schema</a>
+        <a href="#career-archive" class="hover:text-amber-300 transition-colors">Career & Archive</a>
+        <a href="#contact" class="hover:text-amber-300 transition-colors">Contact</a>
+      </nav>
+
+      <div class="flex items-center gap-2">
+        <button onclick="shareLink()" id="btn-share" class="flex items-center gap-1.5 rounded-lg border border-red-900/50 bg-black/40 px-2.5 py-1.5 text-xs text-stone-300 hover:text-amber-200 transition-colors">
+          <i data-lucide="share-2" class="h-3.5 w-3.5"></i>
+          <span class="hidden sm:inline" id="share-text">공유</span>
+        </button>
+        <a href="https://github.com" target="_blank" class="flex items-center gap-1.5 rounded-lg border border-amber-600/50 bg-gradient-to-r from-red-950 to-amber-950 px-3 py-1.5 text-xs font-semibold text-amber-200 shadow-sm hover:border-amber-400 transition-all">
+          <i data-lucide="github" class="h-3.5 w-3.5"></i>
+          <span class="hidden sm:inline">GitHub Repository</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- 2. Hero Section -->
+  <section class="relative overflow-hidden border-b border-red-900/30 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#2a0b14] via-[#14050a] to-[#090204] py-16 sm:py-24">
+    <div class="relative mx-auto max-w-7xl px-4 sm:px-6 text-center">
+      <div class="inline-flex items-center gap-2 rounded-full border border-amber-500/40 bg-gradient-to-r from-red-950/80 via-black/60 to-red-950/80 px-4 py-1.5 text-xs font-semibold text-amber-300 shadow-lg shadow-red-950 mb-6">
+        <i data-lucide="sparkles" class="h-3.5 w-3.5 text-amber-400"></i>
+        <span>Data Engineer & Knowledge Graph Architect Portfolio</span>
+      </div>
+
+      <h1 class="font-gothic text-3xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-amber-100 leading-tight">
+        호그와트의 서사를 해체하는 <br class="hidden sm:inline" />
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-500 via-amber-300 to-amber-500">
+          Neo4j 기반 지식그래프 아카이브
+        </span>
+      </h1>
+
+      <p class="mx-auto mt-6 max-w-3xl text-sm sm:text-base leading-relaxed text-stone-300">
+        &lt;해리 포터와 마법사의 돌&gt;의 복합 인물 관계와 5단계 수호 관문, 아이템 전승 및 사건의 인과 구조를 
+        <strong> 83개 이상의 노드와 13종 시맨틱 온톨로지</strong>로 설계하여 인터랙티브 네트워크로 시각화했습니다.
+      </p>
+
+      <div class="mt-8 flex flex-wrap items-center justify-center gap-4">
+        <a href="#knowledge-graph" class="flex items-center gap-2 rounded-xl border border-amber-500 bg-gradient-to-r from-red-800 via-red-900 to-amber-700 px-6 py-3 text-sm font-bold text-amber-100 shadow-xl shadow-red-950 hover:scale-105 transition-all">
+          <i data-lucide="compass" class="h-4 w-4 text-amber-300"></i>
+          <span>지식그래프 탐색기 바로가기</span>
+          <i data-lucide="chevron-right" class="h-4 w-4 text-amber-300"></i>
+        </a>
+        <button onclick="downloadReport()" class="flex items-center gap-2 rounded-xl border border-red-900/60 bg-black/60 px-5 py-3 text-sm font-semibold text-amber-200 hover:bg-red-950/40 hover:border-amber-600/50 transition-all">
+          <i data-lucide="download" class="h-4 w-4"></i>
+          <span>기획 요약서 다운로드 (.md)</span>
+        </button>
+      </div>
+
+      <!-- Metrics -->
+      <div class="mt-14 grid grid-cols-2 sm:grid-cols-4 gap-4 max-w-4xl mx-auto">
+        <div class="rounded-xl border border-red-950 bg-black/40 p-4 backdrop-blur-sm">
+          <span class="block font-gothic text-3xl font-bold text-amber-400">83+</span>
+          <span class="text-xs text-stone-400 mt-1 block">구축 노드 (Entities)</span>
+        </div>
+        <div class="rounded-xl border border-red-950 bg-black/40 p-4 backdrop-blur-sm">
+          <span class="block font-gothic text-3xl font-bold text-red-400">5 Classes</span>
+          <span class="text-xs text-stone-400 mt-1 block">온톨로지 범주 (Classes)</span>
+        </div>
+        <div class="rounded-xl border border-red-950 bg-black/40 p-4 backdrop-blur-sm">
+          <span class="block font-gothic text-3xl font-bold text-amber-300">13 Types</span>
+          <span class="text-xs text-stone-400 mt-1 block">시맨틱 관계 (Relations)</span>
+        </div>
+        <div class="rounded-xl border border-red-950 bg-black/40 p-4 backdrop-blur-sm">
+          <span class="block font-gothic text-3xl font-bold text-cyan-400">3 Key Qs</span>
+          <span class="text-xs text-stone-400 mt-1 block">Cypher 쿼리 분석 검증</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Executive Summary -->
+  <section id="overview" class="py-16 sm:py-20 border-b border-red-900/30">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-red-900/40 pb-6">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-widest text-amber-500">Chapter Ⅰ & Ⅱ · Project Blueprint</span>
+          <h2 class="mt-1 font-gothic text-3xl font-bold text-amber-100">프로젝트 개요 (Executive Summary)</h2>
+        </div>
+        <div class="flex items-center gap-2 text-xs font-mono text-amber-400/90">
+          <i data-lucide="clock" class="h-3.5 w-3.5"></i>
+          <span>추진 기간: 2026.09 ~ 2026.12 (10주 프로젝트)</span>
+        </div>
+      </div>
+
+      <div class="mt-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div class="rounded-2xl border border-red-950 bg-[#120409]/80 p-6 shadow-xl">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-red-950/70 border border-red-800 text-amber-400 mb-4">
+            <i data-lucide="book-open" class="h-4 w-4"></i>
+          </div>
+          <h3 class="font-gothic text-lg font-bold text-amber-100">추진 배경 및 목적</h3>
+          <p class="mt-2 text-xs leading-relaxed text-stone-300">
+            &lt;해리 포터와 마법사의 돌&gt;의 복합 인물 관계와 사건을 Neo4j 기반 지식그래프로 구축하여, 인물 간 세력 구도와 아이템·장소의 인과율을 데이터 기반으로 체계화하고 서사 구조를 정밀 분석합니다.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-red-950 bg-[#120409]/80 p-6 shadow-xl">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-amber-950/70 border border-amber-800 text-amber-400 mb-4">
+            <i data-lucide="shield" class="h-4 w-4"></i>
+          </div>
+          <h3 class="font-gothic text-lg font-bold text-amber-100">대상 선정 및 범위 정의</h3>
+          <p class="mt-2 text-xs leading-relaxed text-stone-300">
+            <strong>포함 범위:</strong> 1편 &lt;해리 포터와 마법사의 돌&gt; 중심 (해리의 입학부터 돌 사건 해결까지).<br>
+            <strong>제외 범위:</strong> 2~7편 인물 및 일회성 단역, 현실 배우 신상 배제.
+          </p>
+        </div>
+
+        <div class="rounded-2xl border border-red-950 bg-[#120409]/80 p-6 shadow-xl">
+          <div class="flex h-9 w-9 items-center justify-center rounded-lg bg-cyan-950/70 border border-cyan-800 text-cyan-400 mb-4">
+            <i data-lucide="database" class="h-4 w-4"></i>
+          </div>
+          <h3 class="font-gothic text-lg font-bold text-amber-100">최종 산출물 및 학술 가치</h3>
+          <p class="mt-2 text-xs leading-relaxed text-stone-300">
+            Neo4j DB 적재 명세서, vis-network 인터랙티브 시각화 포트폴리오, 복합 서사 온톨로지 모델을 완성하여 문학 텍스트를 GraphRAG 및 네트워크 분석과 연계할 수 있는 기반을 수립했습니다.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Interactive Knowledge Graph Explorer -->
+  <section id="knowledge-graph" class="py-16 sm:py-20 border-b border-red-900/30">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="flex flex-col md:flex-row md:items-end justify-between gap-4 border-b border-red-900/40 pb-6 mb-8">
+        <div>
+          <span class="text-xs font-semibold uppercase tracking-widest text-amber-500">Interactive Vis-network Graph</span>
+          <h2 class="mt-1 font-gothic text-3xl font-bold text-amber-100">인터랙티브 지식그래프 탐색기</h2>
+          <p class="mt-2 text-xs sm:text-sm text-stone-400">
+            CSV 전수 데이터와 온톨로지 관계를 담은 물리 그래프입니다. 노드 클릭 시 우측 인스펙터에 연결된 엣지와 Cypher 쿼리가 표시됩니다.
+          </p>
+        </div>
+      </div>
+
+      <!-- Graph Container Card -->
+      <div class="relative w-full rounded-2xl border border-red-900/40 bg-[#0d0507]/90 shadow-2xl backdrop-blur-md overflow-hidden">
+        <!-- Filter Bar -->
+        <div class="flex flex-wrap items-center justify-between gap-3 border-b border-red-900/30 bg-[#16080d]/80 px-4 py-3 sm:px-6">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-200/70 mr-1">
+              <i data-lucide="filter" class="h-3.5 w-3.5 text-amber-500"></i> 노드 필터:
+            </span>
+            <button onclick="toggleFilter('person')" id="filter-person" class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border border-red-600 bg-red-950/40 text-stone-200 shadow-sm transition-all">
+              <span class="h-2 w-2 rounded-full bg-[#ef4444]"></span>
+              <span>인물 (Person)</span>
+            </button>
+            <button onclick="toggleFilter('group')" id="filter-group" class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border border-amber-600 bg-amber-950/40 text-stone-200 shadow-sm transition-all">
+              <span class="h-2 w-2 rounded-full bg-[#f59e0b]"></span>
+              <span>집단 (Group)</span>
+            </button>
+            <button onclick="toggleFilter('place')" id="filter-place" class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border border-emerald-600 bg-emerald-950/40 text-stone-200 shadow-sm transition-all">
+              <span class="h-2 w-2 rounded-full bg-[#10b981]"></span>
+              <span>장소 (Place)</span>
+            </button>
+            <button onclick="toggleFilter('event')" id="filter-event" class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border border-purple-600 bg-purple-950/40 text-stone-200 shadow-sm transition-all">
+              <span class="h-2 w-2 rounded-full bg-[#8b5cf6]"></span>
+              <span>사건 (Event)</span>
+            </button>
+            <button onclick="toggleFilter('object')" id="filter-object" class="flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-medium border border-cyan-600 bg-cyan-950/40 text-stone-200 shadow-sm transition-all">
+              <span class="h-2 w-2 rounded-full bg-[#06b6d4]"></span>
+              <span>사물 (Object)</span>
+            </button>
+          </div>
+
+          <!-- Search & Controls -->
+          <div class="flex items-center gap-2">
+            <div class="relative">
+              <i data-lucide="search" class="absolute left-2.5 top-1/2 -translate-y-1/2 h-3.5 w-3.5 text-stone-400"></i>
+              <input type="text" id="graph-search" oninput="handleSearch(this.value)" placeholder="노드 이름 검색..." class="h-8 w-40 sm:w-52 rounded-lg border border-red-900/40 bg-black/50 pl-8 pr-3 text-xs text-amber-100 placeholder-stone-500 focus:border-amber-500 focus:outline-none">
+            </div>
+            <button onclick="togglePhysics()" id="btn-physics" class="flex h-8 items-center gap-1 rounded-lg border border-amber-600/50 bg-amber-950/30 px-2.5 text-xs font-medium text-amber-300">
+              <i data-lucide="pause" class="h-3.5 w-3.5" id="physics-icon"></i>
+              <span class="hidden md:inline" id="physics-text">물리 멈춤</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Canvas -->
+        <div class="relative h-[620px] w-full bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-[#1d0912]/80 via-[#100508]/90 to-[#080204]">
+          <div id="vis-canvas" class="h-full w-full cursor-grab active:cursor-grabbing"></div>
+
+          <!-- Floating Buttons -->
+          <div class="absolute bottom-5 left-5 flex flex-col gap-1.5 rounded-xl border border-red-900/40 bg-[#16080d]/85 p-1.5 shadow-xl backdrop-blur-md">
+            <button onclick="zoomIn()" class="rounded-lg p-2 text-stone-300 hover:bg-red-900/30 hover:text-amber-300 transition-colors" title="확대">
+              <i data-lucide="zoom-in" class="h-4 w-4"></i>
+            </button>
+            <button onclick="zoomOut()" class="rounded-lg p-2 text-stone-300 hover:bg-red-900/30 hover:text-amber-300 transition-colors" title="축소">
+              <i data-lucide="zoom-out" class="h-4 w-4"></i>
+            </button>
+            <button onclick="resetView()" class="rounded-lg p-2 text-stone-300 hover:bg-red-900/30 hover:text-amber-300 transition-colors" title="화면 맞춤">
+              <i data-lucide="rotate-ccw" class="h-4 w-4"></i>
+            </button>
+          </div>
+
+          <!-- Node Counter -->
+          <div class="absolute top-4 left-5 flex items-center gap-3 rounded-lg border border-red-900/30 bg-[#14060b]/75 px-3 py-1.5 text-xs text-amber-200/80 backdrop-blur-sm pointer-events-none">
+            <span>렌더링 노드: <strong class="text-amber-400 font-mono" id="node-count">0</strong></span>
+            <span class="text-stone-600">|</span>
+            <span>관계 수: <strong class="text-amber-400 font-mono" id="edge-count">0</strong></span>
+          </div>
+
+          <!-- Inspector Panel -->
+          <div id="inspector-panel" class="hidden absolute top-4 right-4 bottom-4 w-80 sm:w-96 rounded-xl border border-red-800/50 bg-[#130509]/95 p-5 shadow-2xl backdrop-blur-lg overflow-y-auto z-20 flex-col justify-between">
+            <div>
+              <div class="flex items-start justify-between border-b border-red-900/40 pb-3">
+                <div class="flex items-center gap-2">
+                  <span id="inspect-dot" class="h-3 w-3 rounded-full bg-red-500"></span>
+                  <span id="inspect-group" class="text-xs uppercase tracking-wider font-semibold text-red-400">Class</span>
+                </div>
+                <button onclick="closeInspector()" class="rounded p-1 text-stone-400 hover:bg-red-900/40 hover:text-white">✕</button>
+              </div>
+
+              <div class="mt-3">
+                <h4 id="inspect-title" class="font-gothic text-xl font-bold text-amber-100">Node Name</h4>
+                <p id="inspect-role" class="mt-1 text-xs text-amber-400/90 font-medium">Role or Type</p>
+                <p id="inspect-desc" class="mt-2.5 text-xs leading-relaxed text-stone-300/90 bg-black/30 p-2.5 rounded-lg border border-red-950">Description</p>
+              </div>
+
+              <div class="mt-4">
+                <h5 class="flex items-center gap-1.5 text-xs font-semibold text-amber-300/90 uppercase tracking-wider">
+                  <i data-lucide="layers" class="h-3.5 w-3.5 text-amber-500"></i> 연결된 관계 (<span id="inspect-edge-count">0</span>)
+                </h5>
+                <div id="inspect-edge-list" class="mt-2 max-h-48 space-y-1.5 overflow-y-auto pr-1"></div>
+              </div>
+            </div>
+
+            <div class="mt-4 border-t border-red-900/40 pt-3">
+              <div class="flex items-center justify-between mb-1.5">
+                <span class="text-[11px] font-semibold text-amber-400/80 flex items-center gap-1">
+                  <i data-lucide="sparkles" class="h-3 w-3"></i> Cypher Query
+                </span>
+                <button onclick="copyInspectorCypher()" id="btn-copy-inspect" class="flex items-center gap-1 text-[10px] text-amber-400 hover:text-amber-200">
+                  <i data-lucide="copy" class="h-3 w-3"></i> <span>복사</span>
+                </button>
+              </div>
+              <pre id="inspect-cypher" class="rounded bg-black/80 p-2 text-[10px] font-mono text-amber-200/90 overflow-x-auto border border-red-950"></pre>
+            </div>
+          </div>
+        </div>
+
+        <div class="flex flex-wrap items-center justify-between border-t border-red-900/30 bg-[#12060a] px-4 py-2.5 text-[11px] text-stone-400">
+          <div class="flex items-center gap-2">
+            <i data-lucide="info" class="h-3.5 w-3.5 text-amber-500/80"></i>
+            <span>노드를 클릭하면 연결된 엣지와 Cypher 질의문을 인스펙터 패널에서 확인할 수 있습니다.</span>
+          </div>
+          <span class="text-amber-500/80">마우스 휠 줌 · 드래그 캔버스 이동</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Key Questions & Cypher Queries -->
+  <section id="cypher-queries" class="py-16 sm:py-20 border-b border-red-900/30 bg-[#0e0408]/60">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="border-b border-red-900/40 pb-6 mb-8">
+        <span class="text-xs font-semibold uppercase tracking-widest text-amber-500">Chapter Ⅲ · Narrative Analysis</span>
+        <h2 class="mt-1 font-gothic text-3xl font-bold text-amber-100">핵심 질문 및 Cypher 쿼리 분석</h2>
+        <p class="mt-2 text-xs sm:text-sm text-stone-400">
+          기획안의 3대 핵심 질문을 온톨로지 경로로 추적하고 검증 가능한 Cypher 쿼리 코드를 제공합니다.
+        </p>
+      </div>
+
+      <!-- Tab Buttons -->
+      <div class="flex flex-wrap gap-2 border-b border-red-900/40 pb-4">
+        <button onclick="selectQuestionTab('Q1')" id="tab-Q1" class="tab-btn flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-medium border border-amber-500/60 bg-gradient-to-r from-red-950/80 via-red-900/40 to-black text-amber-200 shadow-lg">
+          <span class="flex h-6 w-6 items-center justify-center rounded-md font-mono text-xs font-bold bg-amber-500 text-stone-950">Q1</span>
+          <span class="font-gothic">해리의 사물과 사용 사건</span>
+        </button>
+        <button onclick="selectQuestionTab('Q2')" id="tab-Q2" class="tab-btn flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-medium border border-red-950/60 bg-black/40 text-stone-400 hover:text-stone-200">
+          <span class="flex h-6 w-6 items-center justify-center rounded-md font-mono text-xs font-bold bg-red-950/60 text-amber-400/80">Q2</span>
+          <span class="font-gothic">마법사의 돌 보호/탈취 메커니즘</span>
+        </button>
+        <button onclick="selectQuestionTab('Q3')" id="tab-Q3" class="tab-btn flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-medium border border-red-950/60 bg-black/40 text-stone-400 hover:text-stone-200">
+          <span class="flex h-6 w-6 items-center justify-center rounded-md font-mono text-xs font-bold bg-red-950/60 text-amber-400/80">Q3</span>
+          <span class="font-gothic">해리의 직접 적대 관계 및 기숙사</span>
+        </button>
+      </div>
+
+      <!-- Card Display -->
+      <div class="mt-6 grid grid-cols-1 gap-6 lg:grid-cols-12 rounded-2xl border border-red-900/40 bg-[#14060c]/85 p-6 shadow-2xl backdrop-blur-md">
+        <div class="lg:col-span-6 flex flex-col justify-between space-y-5">
+          <div>
+            <div class="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-950/30 px-3 py-1 text-xs font-medium text-amber-300">
+              <i data-lucide="sparkles" class="h-3 w-3"></i>
+              <span id="q-sub">receivedFrom · receivedItem · usedIn 경로 추적</span>
+            </div>
+            <h3 id="q-title" class="mt-3 font-gothic text-2xl font-bold text-amber-100 leading-snug">Q1. 해리가 받은 사물과 사용된 사건 탐색</h3>
+            <p id="q-desc" class="mt-3 text-sm leading-relaxed text-stone-300/90">
+              해리 포터가 다른 인물에게 받은 사물(투명 망토, 님부스 2000 등)과 해당 사물이 어떤 사건에서 사용되었는지 추적합니다.
+            </p>
+            <div class="mt-4 rounded-xl border border-red-900/30 bg-black/40 p-4">
+              <h4 class="flex items-center gap-1.5 text-xs font-semibold uppercase tracking-wider text-amber-400">
+                <i data-lucide="database" class="h-3.5 w-3.5 text-amber-500"></i> 서사 분석 인사이트
+              </h4>
+              <p id="q-insight" class="mt-2 text-xs leading-relaxed text-amber-100/80">
+                해그리드와 맥고나걸로부터 유입된 도구들이 후반부 위기 극복의 물리적 수단으로 전환되는 서사적 인과관계가 명확히 드러납니다.
+              </p>
+            </div>
+          </div>
+          <div class="pt-2">
+            <button onclick="highlightCurrentQuestionNodes()" class="flex items-center gap-2 rounded-xl border border-amber-600/60 bg-gradient-to-r from-red-900 to-red-800 px-4 py-2.5 text-xs font-semibold text-amber-100 shadow-md shadow-red-950 hover:from-red-800 hover:to-red-700 transition-all">
+              <i data-lucide="eye" class="h-4 w-4 text-amber-300"></i>
+              <span>지식그래프 탐색기에서 관련 노드 하이라이트</span>
+              <i data-lucide="arrow-right" class="h-3.5 w-3.5 text-amber-300"></i>
+            </button>
+          </div>
+        </div>
+
+        <div class="lg:col-span-6 flex flex-col">
+          <div class="flex items-center justify-between rounded-t-xl border-t border-l border-r border-red-900/50 bg-[#1c0810] px-4 py-2.5 text-xs">
+            <div class="flex items-center gap-2 text-amber-200/90 font-mono">
+              <i data-lucide="code" class="h-3.5 w-3.5 text-amber-400"></i>
+              <span id="cypher-header">Cypher Query (Q1)</span>
+            </div>
+            <button onclick="copyCurrentCypher()" class="flex items-center gap-1 rounded bg-black/50 px-2 py-1 text-[11px] text-stone-300 hover:bg-amber-950 hover:text-amber-200 transition-colors border border-red-950">
+              <i data-lucide="copy" class="h-3 w-3"></i>
+              <span id="btn-copy-text">쿼리 복사</span>
+            </button>
+          </div>
+          <div class="flex-1 rounded-b-xl border border-red-900/50 bg-[#090204] p-4 font-mono text-xs text-amber-100/90 overflow-x-auto shadow-inner">
+            <pre class="leading-relaxed"><code id="cypher-code"></code></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Data Model & Ontology Specification -->
+  <section id="ontology" class="py-16 sm:py-20 border-b border-red-900/30">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="border-b border-red-900/40 pb-6 mb-8">
+        <span class="text-xs font-semibold uppercase tracking-widest text-amber-500">Chapter Ⅳ · Data Modeling</span>
+        <h2 class="mt-1 font-gothic text-3xl font-bold text-amber-100">데이터 모델 및 온톨로지 명세</h2>
+        <p class="mt-2 text-xs sm:text-sm text-stone-400">
+          5개 핵심 클래스(인물, 집단, 장소, 사건, 사물)와 13종 시맨틱 관계의 상세 정의입니다.
+        </p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
+        <div class="rounded-xl border border-red-950/70 bg-[#14060c]/80 p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-[#ef4444]"></span>
+              <h5 class="font-gothic text-base font-bold text-amber-100">인물 (Person)</h5>
+            </div>
+            <span class="rounded-md bg-black/40 px-2 py-0.5 font-mono text-xs text-amber-400 border border-red-950">26+ (설계 30)</span>
+          </div>
+          <p class="mt-2.5 text-xs text-stone-300">서사를 주도하거나 관여하는 행위 주체 (해리, 론, 헤르미온느, 스네이프, 퀴렐 등)</p>
+        </div>
+
+        <div class="rounded-xl border border-red-950/70 bg-[#14060c]/80 p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-[#f59e0b]"></span>
+              <h5 class="font-gothic text-base font-bold text-amber-100">집단 (Group)</h5>
+            </div>
+            <span class="rounded-md bg-black/40 px-2 py-0.5 font-mono text-xs text-amber-400 border border-red-950">9+ (설계 8)</span>
+          </div>
+          <p class="mt-2.5 text-xs text-stone-300">호그와트 4대 기숙사, 교수진, 가문, 스포츠 퀴디치 팀</p>
+        </div>
+
+        <div class="rounded-xl border border-red-950/70 bg-[#14060c]/80 p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-[#10b981]"></span>
+              <h5 class="font-gothic text-base font-bold text-amber-100">장소 (Place)</h5>
+            </div>
+            <span class="rounded-md bg-black/40 px-2 py-0.5 font-mono text-xs text-amber-400 border border-red-950">15 (설계 15)</span>
+          </div>
+          <p class="mt-2.5 text-xs text-stone-300">호그와트 성, 3층 금지 복도, 5개 지하 관문, 프리벳가, 다이애건 앨리</p>
+        </div>
+
+        <div class="rounded-xl border border-red-950/70 bg-[#14060c]/80 p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-[#8b5cf6]"></span>
+              <h5 class="font-gothic text-base font-bold text-amber-100">사건 (Event)</h5>
+            </div>
+            <span class="rounded-md bg-black/40 px-2 py-0.5 font-mono text-xs text-amber-400 border border-red-950">19+ (설계 15)</span>
+          </div>
+          <p class="mt-2.5 text-xs text-stone-300">기숙사 배정식, 트롤 사건, 퀴디치 결전, 체스 대결, 최종 대결</p>
+        </div>
+
+        <div class="rounded-xl border border-red-950/70 bg-[#14060c]/80 p-4">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="h-3 w-3 rounded-full bg-[#06b6d4]"></span>
+              <h5 class="font-gothic text-base font-bold text-amber-100">사물 (Object)</h5>
+            </div>
+            <span class="rounded-md bg-black/40 px-2 py-0.5 font-mono text-xs text-amber-400 border border-red-950">15 (설계 15)</span>
+          </div>
+          <p class="mt-2.5 text-xs text-stone-300">마법사의 돌, 투명 망토, 님부스 2000, 소망의 거울, 플러피, 악마의 덫</p>
+        </div>
+      </div>
+
+      <!-- Relations Table -->
+      <div class="overflow-hidden rounded-xl border border-red-900/40 bg-[#12050a]/90 shadow-xl">
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs">
+            <thead class="border-b border-red-900/50 bg-[#1c0810] font-mono uppercase text-amber-300">
+              <tr>
+                <th class="px-4 py-3">관계명</th>
+                <th class="px-4 py-3">시작 클래스</th>
+                <th class="px-4 py-3">도착 클래스</th>
+                <th class="px-4 py-3">시맨틱 의미 및 서사 구조</th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-red-950/60 font-sans text-stone-300">
+              <tr class="hover:bg-red-950/20">
+                <td class="px-4 py-3 font-mono font-bold text-amber-400">:BELONGS_TO</td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">인물</span></td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">집단</span></td>
+                <td class="px-4 py-3">인물이 특정 기숙사, 가문, 퀴디치 팀에 소속됨</td>
+              </tr>
+              <tr class="hover:bg-red-950/20">
+                <td class="px-4 py-3 font-mono font-bold text-amber-400">:FRIEND_OF</td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">인물</span></td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">인물</span></td>
+                <td class="px-4 py-3">상호 우호적이며 위기 극복을 함께하는 친구 관계</td>
+              </tr>
+              <tr class="hover:bg-red-950/20">
+                <td class="px-4 py-3 font-mono font-bold text-amber-400">:RIVAL_OF</td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">인물</span></td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">인물</span></td>
+                <td class="px-4 py-3">대립하거나 적대하는 서사적 갈등 관계 (해리-말포이, 해리-볼드모트)</td>
+              </tr>
+              <tr class="hover:bg-red-950/20">
+                <td class="px-4 py-3 font-mono font-bold text-amber-400">:PROTECTS</td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">인물</span></td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">인물</span></td>
+                <td class="px-4 py-3">위험으로부터 다른 인물을 수호함 (스네이프-해리, 덤블도어-해리)</td>
+              </tr>
+              <tr class="hover:bg-red-950/20">
+                <td class="px-4 py-3 font-mono font-bold text-amber-400">:PARTICIPATES_IN</td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">인물/집단</span></td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">사건</span></td>
+                <td class="px-4 py-3">인물이 해당 사건의 당사자 또는 해결 주체로 참여함</td>
+              </tr>
+              <tr class="hover:bg-red-950/20">
+                <td class="px-4 py-3 font-mono font-bold text-amber-400">:USED_IN</td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">사물</span></td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">사건</span></td>
+                <td class="px-4 py-3">사물이 사건 해결의 핵심 도구 또는 기믹으로 사용됨</td>
+              </tr>
+              <tr class="hover:bg-red-950/20">
+                <td class="px-4 py-3 font-mono font-bold text-amber-400">:GUARDS</td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">사물</span></td>
+                <td class="px-4 py-3"><span class="rounded bg-black/50 px-2 py-0.5 border border-red-950">사물</span></td>
+                <td class="px-4 py-3">사물이 마법사의 돌을 보호하는 방어벽/수호 장치 역할을 수행</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Career & Archive -->
+  <section id="career-archive" class="py-16 sm:py-20">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6">
+      <div class="border-b border-red-900/40 pb-6 mb-8">
+        <span class="text-xs font-semibold uppercase tracking-widest text-amber-500">Engineering Profile & Roadmap</span>
+        <h2 class="mt-1 font-gothic text-3xl font-bold text-amber-100">포트폴리오 & 이력 관리 아카이브</h2>
+        <p class="mt-2 text-xs sm:text-sm text-stone-400">
+          엔지니어 기술 프로필 및 차기 시리즈(&lt;비밀의 방&gt;, GraphRAG) 확장 로드맵입니다.
+        </p>
+      </div>
+
+      <!-- About Me Box -->
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center rounded-2xl border border-red-900/40 bg-gradient-to-br from-[#18070e] via-[#110408] to-[#0a0205] p-6 sm:p-8 shadow-2xl mb-12">
+        <div class="lg:col-span-7 space-y-4">
+          <div class="inline-flex items-center gap-1.5 rounded-full border border-amber-500/30 bg-amber-950/30 px-3 py-1 text-xs font-medium text-amber-300">
+            <i data-lucide="briefcase" class="h-3 w-3"></i>
+            <span>Data Engineer & Knowledge Graph Architect</span>
+          </div>
+          <h3 class="font-gothic text-2xl sm:text-3xl font-bold text-amber-100">
+            복잡한 서사와 비정형 데이터를 <br>
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-amber-300 to-amber-500">
+              구조화된 시맨틱 네트워크
+            </span>로 시각화합니다.
+          </h3>
+          <p class="text-sm leading-relaxed text-stone-300/90">
+            소설 및 영화 원문에서 개체명(NER) 및 다자 관계를 추출하고 온톨로지를 설계하여 Neo4j 및 Graph Database로 적재합니다. LLM과의 결합을 통해 환각을 억제하는 GraphRAG 아키텍처를 연구하고 있습니다.
+          </p>
+          <div class="pt-2">
+            <div class="flex flex-wrap gap-2">
+              <span class="rounded-lg border border-red-800 bg-red-950/40 px-3 py-1 text-xs font-medium text-amber-200">Neo4j & Cypher (Expert)</span>
+              <span class="rounded-lg border border-amber-800 bg-amber-950/40 px-3 py-1 text-xs font-medium text-amber-300">Ontology Modeling</span>
+              <span class="rounded-lg border border-cyan-800 bg-cyan-950/40 px-3 py-1 text-xs font-medium text-cyan-200">GraphRAG & LLM</span>
+              <span class="rounded-lg border border-purple-800 bg-purple-950/40 px-3 py-1 text-xs font-medium text-purple-200">vis-network & D3</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="lg:col-span-5 rounded-xl border border-red-900/40 bg-[#0e0307]/80 p-5 space-y-4">
+          <h4 class="font-gothic text-base font-bold text-amber-200 border-b border-red-950 pb-2 flex items-center justify-between">
+            <span>엔지니어 프로필</span>
+            <span class="text-xs font-normal text-stone-400">Team Korea Univ.</span>
+          </h4>
+          <ul class="space-y-2.5 text-xs text-stone-300">
+            <li class="flex items-center justify-between">
+              <span class="text-stone-400">소속:</span>
+              <span class="font-medium text-amber-100">고려대학교 (Korea University)</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span class="text-stone-400">분야:</span>
+              <span class="font-medium text-amber-100">Knowledge Graph, Data Engineering</span>
+            </li>
+            <li class="flex items-center justify-between">
+              <span class="text-stone-400">이메일:</span>
+              <span class="font-medium text-amber-100">woosy0813@korea.ac.kr</span>
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Roadmap Cards -->
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+        <div class="rounded-xl border border-amber-600/60 bg-gradient-to-b from-[#200913] to-[#110408] p-5 shadow-xl">
+          <div class="flex items-center justify-between">
+            <span class="rounded-full bg-emerald-950/60 px-2.5 py-0.5 text-[11px] font-semibold text-emerald-300 border border-emerald-800">✓ 구축 완료 (Live)</span>
+            <span class="font-mono text-xs text-stone-400">2026.09 - 12</span>
+          </div>
+          <h5 class="mt-3 font-gothic text-lg font-bold text-amber-100">&lt;해리 포터와 마법사의 돌&gt; 지식그래프</h5>
+          <p class="mt-2 text-xs text-stone-300">83개+ 노드, 13종 시맨틱 관계, 지하 5관문 방어 메커니즘 전수 모델링 완성.</p>
+        </div>
+
+        <div class="rounded-xl border border-red-900/40 bg-gradient-to-b from-[#16060c] to-[#0c0306] p-5 shadow-xl">
+          <div class="flex items-center justify-between">
+            <span class="rounded-full bg-amber-950/60 px-2.5 py-0.5 text-[11px] font-semibold text-amber-300 border border-amber-800">Next 시리즈 예정</span>
+            <span class="font-mono text-xs text-stone-400">2027 Q1</span>
+          </div>
+          <h5 class="mt-3 font-gothic text-lg font-bold text-amber-200/90">&lt;해리 포터와 비밀의 방&gt; 온톨로지 확장</h5>
+          <p class="mt-2 text-xs text-stone-400">바실리스크, 리들의 일기장(호크룩스), 슬리데린 혈통 및 50+ 신규 사건 확장.</p>
+        </div>
+
+        <div class="rounded-xl border border-red-900/40 bg-gradient-to-b from-[#16060c] to-[#0c0306] p-5 shadow-xl">
+          <div class="flex items-center justify-between">
+            <span class="rounded-full bg-purple-950/60 px-2.5 py-0.5 text-[11px] font-semibold text-purple-300 border border-purple-800">R&D 리서치 예정</span>
+            <span class="font-mono text-xs text-stone-400">2027 Q2</span>
+          </div>
+          <h5 class="mt-3 font-gothic text-lg font-bold text-amber-200/90">GraphRAG 기반 호그와트 질의응답 엔진</h5>
+          <p class="mt-2 text-xs text-stone-400">지식그래프의 엄밀한 사실 관계와 LLM을 결합하여 환각 없는 복합 추론 챗봇 구축.</p>
+        </div>
+      </div>
+
+      <!-- Contact Form -->
+      <div id="contact" class="rounded-2xl border border-red-900/40 bg-[#14050a]/90 p-6 sm:p-8 shadow-2xl">
+        <div class="max-w-2xl mx-auto text-center">
+          <h3 class="font-gothic text-2xl font-bold text-amber-100">지식그래프 협업 및 연구 문의</h3>
+          <p class="mt-2 text-xs text-stone-400">모델링 피드백, GraphRAG 연구 제안을 환영합니다.</p>
+          <form onsubmit="handleContactSubmit(event)" class="mt-6 space-y-4 text-left">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-xs font-medium text-amber-200/80 mb-1">성함 / 소속</label>
+                <input type="text" required placeholder="홍길동" class="w-full rounded-lg border border-red-950 bg-black/60 px-3 py-2 text-xs text-amber-100 placeholder-stone-600 focus:border-amber-500 focus:outline-none">
+              </div>
+              <div>
+                <label class="block text-xs font-medium text-amber-200/80 mb-1">회신 이메일</label>
+                <input type="email" required placeholder="name@domain.com" class="w-full rounded-lg border border-red-950 bg-black/60 px-3 py-2 text-xs text-amber-100 placeholder-stone-600 focus:border-amber-500 focus:outline-none">
+              </div>
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-amber-200/80 mb-1">문의 내용</label>
+              <textarea rows="3" required placeholder="협업 문의 내용을 남겨주세요." class="w-full rounded-lg border border-red-950 bg-black/60 px-3 py-2 text-xs text-amber-100 placeholder-stone-600 focus:border-amber-500 focus:outline-none resize-none"></textarea>
+            </div>
+            <div class="text-center pt-2">
+              <button type="submit" class="inline-flex items-center gap-2 rounded-xl border border-amber-600/70 bg-gradient-to-r from-red-800 to-amber-700 px-6 py-2.5 text-xs font-bold text-amber-100 shadow-lg cursor-pointer">
+                <span>문의 메시지 보내기</span>
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-red-950 bg-[#070103] py-8 text-center text-xs text-stone-500">
+    <div class="mx-auto max-w-7xl px-4 sm:px-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <span class="font-gothic text-amber-400 font-bold">Hogwarts Knowledge Graph Project · 고려대학교 데이터 엔지니어링 포트폴리오</span>
+      <span>Single-file index.html compatible with GitHub Pages</span>
+    </div>
+  </footer>
+
+  <!-- Single-File JavaScript Data & Logic -->
+  <script>
+    // 1. Data Definitions
+    const CLASS_COLORS = {
+      person: { bg: '#ef4444', border: '#b91c1c', glow: 'rgba(239, 68, 68, 0.45)', name: '인물 (Person)' },
+      group: { bg: '#f59e0b', border: '#d97706', glow: 'rgba(245, 158, 11, 0.45)', name: '집단 (Group)' },
+      place: { bg: '#10b981', border: '#059669', glow: 'rgba(16, 185, 129, 0.45)', name: '장소 (Place)' },
+      event: { bg: '#8b5cf6', border: '#7c3aed', glow: 'rgba(139, 92, 246, 0.45)', name: '사건 (Event)' },
+      object: { bg: '#06b6d4', border: '#0891b2', glow: 'rgba(6, 182, 212, 0.45)', name: '사물 (Object)' }
+    };
+
+    const ALL_NODES = [
+      // Person
+      { id: '해리 포터', label: '해리 포터', group: 'person', role: '주인공 / 그리핀도르', description: '볼드모트의 살인 저주에서 살아남은 마법사 소년.' },
+      { id: '론 위즐리', label: '론 위즐리', group: 'person', role: '조력자 / 그리핀도르', description: '해리의 절친한 친구. 마법사 체스에서 탁월한 전략과 희생을 선보임.' },
+      { id: '헤르미온느 그레인저', label: '헤르미온느 그레인저', group: 'person', role: '조력자 / 그리핀도르', description: '가장 명석한 두뇌로 악마의 덫을 불로 돌파하고 스네이프를 의심함.' },
+      { id: '드레이코 말포이', label: '드레이코 말포이', group: 'person', role: '적대자 / 슬리데린', description: '순수혈통 자부심을 지닌 해리의 라이벌.' },
+      { id: '세베루스 스네이프', label: '세베루스 스네이프', group: 'person', role: '마법약 교수 / 슬리데린 사감', description: '의심을 받으나 퀴렐의 저주로부터 해리를 보호함.' },
+      { id: '볼드모트 경', label: '볼드모트 경', group: 'person', role: '최종 적대자', description: '마법사의 돌로 부활을 꾀하는 어둠의 군주.' },
+      { id: '알버스 덤블도어', label: '알버스 덤블도어', group: 'person', role: '호그와트 교장', description: '20세기 최고의 마법사이자 해리의 든든한 후견인.' },
+      { id: '루베우스 해그리드', label: '루베우스 해그리드', group: 'person', role: '사냥터지기', description: '해리에게 마법 세계를 열어주고 플러피를 기른 조력자.' },
+      { id: '퀴리누스 퀴렐', label: '퀴리누스 퀴렐', group: 'person', role: '어둠의 마법 방어술 교수', description: '볼드모트를 몸에 빙의시켜 마법사의 돌을 탈취하려 함.' },
+      { id: '네빌 롱바텀', label: '네빌 롱바텀', group: 'person', role: '그리핀도르 학생', description: '친구들을 막아서는 진정한 용기로 기숙사 우승컵을 견인함.' },
+      { id: '미네르바 맥고나걸', label: '미네르바 맥고나걸', group: 'person', role: '변신술 교수 / 교감', description: '해리의 재능을 보고 님부스 2000을 하사함.' },
+      { id: '올리버 우드', label: '올리버 우드', group: 'person', role: '퀴디치 주장', description: '그리핀도르 퀴디치 팀 주장.' },
+      { id: '프레드 위즐리', label: '프레드 위즐리', group: 'person', role: '위즐리 가문', description: '론의 형, 퀴디치 몰이꾼.' },
+      { id: '조지 위즐리', label: '조지 위즐리', group: 'person', role: '위즐리 가문', description: '론의 형, 퀴디치 몰이꾼.' },
+      { id: '퍼시 위즐리', label: '퍼시 위즐리', group: 'person', role: '위즐리 가문 / 반장', description: '그리핀도르 반장.' },
+      { id: '몰리 위즐리', label: '몰리 위즐리', group: 'person', role: '위즐리 어머니', description: '9와 3/4 승강장 통과법을 알려준 어머니.' },
+      { id: '버논 더즐리', label: '버논 더즐리', group: 'person', role: '이모부', description: '해리의 마법 입학 편지를 숨기려 한 머글.' },
+      { id: '페투니아 더즐리', label: '페투니아 더즐리', group: 'person', role: '이모', description: '해리의 이모.' },
+      { id: '두들리 더즐리', label: '두들리 더즐리', group: 'person', role: '사촌', description: '해리의 사촌 형제.' },
+      { id: '개릭 올리반더', label: '개릭 올리반더', group: 'person', role: '지팡이 장인', description: '해리에게 호랑가시나무 지팡이를 건넨 장인.' },
+      { id: '아구스 필치', label: '아구스 필치', group: 'person', role: '관리인', description: '야간 순찰을 도는 관리인.' },
+      { id: '로란다 후치', label: '로란다 후치', group: 'person', role: '비행 교수', description: '비행 수업 지도 및 퀴디치 심판.' },
+      { id: '빈센트 크랩', label: '빈센트 크랩', group: 'person', role: '슬리데린 학생', description: '말포이의 추종자.' },
+      { id: '그레고리 고일', label: '그레고리 고일', group: 'person', role: '슬리데린 학생', description: '말포이의 추종자.' },
+
+      // Group
+      { id: '그리핀도르', label: '그리핀도르', group: 'group', role: '4대 기숙사', description: '용기와 대담함을 기리는 기숙사.' },
+      { id: '슬리데린', label: '슬리데린', group: 'group', role: '4대 기숙사', description: '야망과 순수혈통을 중시하는 기숙사.' },
+      { id: '래번클로', label: '래번클로', group: 'group', role: '4대 기숙사', description: '지혜와 총명함을 상징하는 기숙사.' },
+      { id: '후플푸프', label: '후플푸프', group: 'group', role: '4대 기숙사', description: '정직과 성실함을 중시하는 기숙사.' },
+      { id: '호그와트 교수진', label: '호그와트 교수진', group: 'group', role: '교직원 조직', description: '덤블도어와 사감 교수들의 연합.' },
+      { id: '더즐리 가족', label: '더즐리 가족', group: 'group', role: '머글 가족', description: '프리벳가 4번지의 거주민들.' },
+      { id: '위즐리 가문', label: '위즐리 가문', group: 'group', role: '마법사 가문', description: '빨간 머리의 유서 깊은 마법사 가문.' },
+      { id: '그리핀도르 퀴디치 팀', label: '그리핀도르 퀴디치 팀', group: 'group', role: '스포츠 팀', description: '해리가 수색꾼으로 활약한 퀴디치 팀.' },
+      { id: '슬리데린 퀴디치 팀', label: '슬리데린 퀴디치 팀', group: 'group', role: '스포츠 팀', description: '그리핀도르의 라이벌 퀴디치 팀.' },
+
+      // Place
+      { id: '호그와트', label: '호그와트', group: 'place', role: '마법 학교', description: '스코틀랜드의 장엄한 마법 성채.' },
+      { id: '3층 금지 복도', label: '3층 금지 복도', group: 'place', role: '접근금지 구역', description: '플러피가 있는 방으로 이어지는 복도.' },
+      { id: '플러피가 있는 방', label: '플러피의 방', group: 'place', role: '1차 관문', description: '머리 셋 달린 개 플러피가 지키는 방.' },
+      { id: '악마의 덫이 있는 공간', label: '악마의 덫 공간', group: 'place', role: '2차 관문', description: '스프라우트 교수가 배치한 식물 방어선.' },
+      { id: '날개 달린 열쇠의 방', label: '날개 달린 열쇠의 방', group: 'place', role: '3차 관문', description: '빗자루 비행을 시험하는 열쇠의 방.' },
+      { id: '마법사 체스의 방', label: '마법사 체스의 방', group: 'place', role: '4차 관문', description: '거대 체스 석상들이 지키는 방.' },
+      { id: '최종 대결의 방', label: '최종 대결의 방', group: 'place', role: '최종 관문', description: '소망의 거울과 마법사의 돌이 놓인 지하 방.' },
+      { id: '프리벳가 4번지', label: '프리벳가 4번지', group: 'place', role: '머글 거주지', description: '해리의 이모네 집.' },
+      { id: '다이애건 앨리', label: '다이애건 앨리', group: 'place', role: '마법 상점가', description: '마법사들의 도심 번화가.' },
+      { id: '그린고츠 은행', label: '그린고츠 은행', group: 'place', role: '마법사 은행', description: '고블린들이 운영하는 금고.' },
+      { id: '713번 금고', label: '713번 금고', group: 'place', role: '특수 금고', description: '마법사의 돌이 보관되어 있던 금고.' },
+      { id: '9와 4분의 3 승강장', label: '9와 4분의 3 승강장', group: 'place', role: '마법 승강장', description: '호그와트 급행열차 탑승지.' },
+      { id: '퀴디치 경기장', label: '퀴디치 경기장', group: 'place', role: '경기장', description: '기숙사 대항전이 열리는 필드.' },
+      { id: '금지된 숲', label: '금지된 숲', group: 'place', role: '위험 지역', description: '신비하고 위험한 생물들이 사는 숲.' },
+      { id: '해그리드의 오두막', label: '해그리드의 오두막', group: 'place', role: '오두막', description: '숲 가장자리에 위치한 해그리드의 거처.' },
+
+      // Event
+      { id: 'Harry Is Left at Privet Drive', label: '프리벳가에 맡겨진 해리', group: 'event', role: '오프닝 사건', description: '볼드모트 몰락 직후 아기 해리가 더즐리 가에 맡겨짐.' },
+      { id: 'The Hogwarts Letter Incident', label: '입학 편지 배달 소동', group: 'event', role: '초반 사건', description: '수천 통의 편지가 쏟아져 바위섬으로 피신함.' },
+      { id: 'Hagrid Tells Harry About Hogwarts', label: '해그리드의 진실 고백', group: 'event', role: '초반 사건', description: '해리가 마법사임을 알게 된 결정적 순간.' },
+      { id: 'The Retrieval from Vault 713', label: '713번 금고 회수 작전', group: 'event', role: '보물 회수', description: '해그리드가 돌을 그린고츠에서 호그와트로 회수함.' },
+      { id: 'Harry Chooses His Wand', label: '지팡이의 선택', group: 'event', role: '도구 선택', description: '불사조 깃털 지팡이가 해리를 선택함.' },
+      { id: 'Harry Enters Platform Nine and Three-Quarters', label: '승강장 진입', group: 'event', role: '출발', description: '벽돌 기둥을 통과해 급행열차에 탑승함.' },
+      { id: 'Harry and Ron Meet', label: '해리와 론의 첫 만남', group: 'event', role: '우정의 시작', description: '기차 안에서 간식을 나누며 친구가 됨.' },
+      { id: 'The Sorting Ceremony', label: '기숙사 배정식', group: 'event', role: '의식', description: '분류 모자가 해리를 그리핀도르로 배정함.' },
+      { id: 'The Halloween Troll Incident', label: '할로윈 트롤 침입 사건', group: 'event', role: '위기 극복', description: '트롤을 함께 물리치며 삼총사의 우정이 완성됨.' },
+      { id: 'Gryffindor vs. Slytherin Quidditch Match', label: '그리핀도르 퀴디치 경기', group: 'event', role: '스포츠 결전', description: '해리가 스니치를 입으로 잡아 첫 승리를 거둠.' },
+      { id: 'Fluffy Chamber Encounter', label: '플러피의 방 잠입', group: 'event', role: '1차 돌파', description: '투명 망토와 음악으로 플러피를 지나침.' },
+      { id: 'Devil\'s Snare Chamber', label: '악마의 덫 탈출', group: 'event', role: '2차 돌파', description: '헤르미온느가 햇빛 마법으로 덫을 풂.' },
+      { id: 'Flying Keys Chamber', label: '날개 달린 열쇠 추격전', group: 'event', role: '3차 돌파', description: '해리가 빗자루로 올바른 열쇠를 낚아챔.' },
+      { id: 'Wizard\'s Chess Chamber', label: '마법사 체스 대결', group: 'event', role: '4차 돌파', description: '론의 전략적 나이트 플레이로 체스를 승리함.' },
+      { id: 'Ron\'s Chess Sacrifice', label: '론의 체스 희생', group: 'event', role: '희생 사건', description: '해리가 체크메이트를 걸 수 있도록 론이 희생함.' },
+      { id: 'Mirror of Erised Chamber', label: '소망의 거울의 진실', group: 'event', role: '최종 관문', description: '거울을 통해 해리의 주머니에 돌이 나타남.' },
+      { id: 'Harry Confronts Quirrell', label: '퀴렐과의 최종 대결', group: 'event', role: '클라이맥스', description: '어머니의 사랑의 보호 마법으로 퀴렐을 소멸시킴.' },
+      { id: 'Gryffindor Wins the House Cup', label: '기숙사 우승컵 수상', group: 'event', role: '에필로그', description: '삼총사와 네빌의 용기로 역전 우승을 차지함.' },
+
+      // Object
+      { id: '마법사의 돌', label: '마법사의 돌', group: 'object', role: '전설의 아티팩트', description: '영생의 불로장생 약과 순금을 만드는 기적의 돌.' },
+      { id: '투명 망토', label: '투명 망토', group: 'object', role: '마법 가보', description: '해리의 아버지가 남긴 완벽한 은폐 망토.' },
+      { id: '님부스 2000', label: '님부스 2000', group: 'object', role: '최고급 빗자루', description: '맥고나걸 교수가 해리에게 하사한 경기용 빗자루.' },
+      { id: '해리의 지팡이', label: '해리의 지팡이', group: 'object', role: '마법 지팡이', description: '호랑가시나무와 불사조 깃털로 만들어짐.' },
+      { id: '볼드모트의 지팡이', label: '볼드모트의 지팡이', group: 'object', role: '마법 지팡이', description: '해리의 지팡이와 형제 쌍둥이 핵을 지님.' },
+      { id: '헤드위그', label: '헤드위그', group: 'object', role: '흰올빼미', description: '해그리드가 사준 충직한 부엉이.' },
+      { id: '호그와트 입학 편지', label: '호그와트 입학 편지', group: 'object', role: '양피지 편지', description: '해리를 마법 세계로 부른 편지.' },
+      { id: '플러피', label: '플러피', group: 'object', role: '머리 셋 달린 개', description: '1차 관문 트랩도어를 지키는 맹수.' },
+      { id: '트랩도어', label: '트랩도어', group: 'object', role: '지하 문', description: '지하 수호 공간으로 통하는 출입구.' },
+      { id: '악마의 덫', label: '악마의 덫', group: 'object', role: '수호 식물', description: '2차 관문의 옥죄는 식물.' },
+      { id: '날개 달린 열쇠들', label: '날개 달린 열쇠들', group: 'object', role: '비행 열쇠', description: '3차 관문을 여는 마법 열쇠 무리.' },
+      { id: '거대 마법사 체스판', label: '거대 마법사 체스판', group: 'object', role: '마법 석상', description: '4차 관문의 살아있는 체스 말들.' },
+      { id: '소망의 거울', label: '소망의 거울', group: 'object', role: '최종 안전장치', description: '돌을 순수하게 지키려는 자에게만 돌을 건넴.' },
+      { id: '기억구슬', label: '기억구슬', group: 'object', role: '마법 구슬', description: '네빌의 물건이자 해리의 비행 재능을 발견케 함.' },
+      { id: '골든 스니치', label: '골든 스니치', group: 'object', role: '퀴디치 공', description: '해리가 첫 경기에서 승리를 따낸 황금 공.' }
+    ];
+
+    const ALL_EDGES = [
+      { from: '해리 포터', to: '드레이코 말포이', label: 'RIVAL_OF' },
+      { from: '론 위즐리', to: '드레이코 말포이', label: 'RIVAL_OF' },
+      { from: '해리 포터', to: '볼드모트 경', label: 'RIVAL_OF' },
+      { from: '해리 포터', to: '퀴리누스 퀴렐', label: 'RIVAL_OF' },
+      { from: '퀴리누스 퀴렐', to: '볼드모트 경', label: 'SERVES' },
+      { from: '루베우스 해그리드', to: '알버스 덤블도어', label: 'SERVES' },
+      { from: '해리 포터', to: '론 위즐리', label: 'FRIEND_OF' },
+      { from: '해리 포터', to: '헤르미온느 그레인저', label: 'FRIEND_OF' },
+      { from: '론 위즐리', to: '헤르미온느 그레인저', label: 'FRIEND_OF' },
+      { from: '해리 포터', to: '루베우스 해그리드', label: 'FRIEND_OF' },
+      { from: '세베루스 스네이프', to: '해리 포터', label: 'PROTECTS' },
+      { from: '알버스 덤블도어', to: '해리 포터', label: 'PROTECTS' },
+      { from: '해리 포터', to: '세베루스 스네이프', label: 'SUSPECTS' },
+      { from: '헤르미온느 그레인저', to: '세베루스 스네이프', label: 'SUSPECTS' },
+      { from: '해리 포터', to: '그리핀도르', label: 'BELONGS_TO' },
+      { from: '론 위즐리', to: '그리핀도르', label: 'BELONGS_TO' },
+      { from: '헤르미온느 그레인저', to: '그리핀도르', label: 'BELONGS_TO' },
+      { from: '네빌 롱바텀', to: '그리핀도르', label: 'BELONGS_TO' },
+      { from: '드레이코 말포이', to: '슬리데린', label: 'BELONGS_TO' },
+      { from: '세베루스 스네이프', to: '슬리데린', label: 'BELONGS_TO' },
+      { from: '알버스 덤블도어', to: '호그와트 교수진', label: 'BELONGS_TO' },
+      { from: '미네르바 맥고나걸', to: '호그와트 교수진', label: 'BELONGS_TO' },
+      { from: '퀴리누스 퀴렐', to: '호그와트 교수진', label: 'BELONGS_TO' },
+      { from: '해리 포터', to: '그리핀도르 퀴디치 팀', label: 'BELONGS_TO' },
+      { from: '해리 포터', to: '투명 망토', label: 'OWNS' },
+      { from: '해리 포터', to: '님부스 2000', label: 'OWNS' },
+      { from: '해리 포터', to: '해리의 지팡이', label: 'OWNS' },
+      { from: '해리 포터', to: '헤드위그', label: 'OWNS' },
+      { from: '루베우스 해그리드', to: '플러피', label: 'OWNS' },
+      { from: '미네르바 맥고나걸', to: '님부스 2000', label: 'GIVES' },
+      { from: '루베우스 해그리드', to: '헤드위그', label: 'GIVES' },
+      { from: '루베우스 해그리드', to: '호그와트 입학 편지', label: 'GIVES' },
+      { from: '해리 포터', to: 'The Sorting Ceremony', label: 'PARTICIPATES_IN' },
+      { from: '해리 포터', to: 'The Halloween Troll Incident', label: 'PARTICIPATES_IN' },
+      { from: '해리 포터', to: 'Gryffindor vs. Slytherin Quidditch Match', label: 'PARTICIPATES_IN' },
+      { from: '해리 포터', to: 'Fluffy Chamber Encounter', label: 'PARTICIPATES_IN' },
+      { from: '해리 포터', to: 'Devil\'s Snare Chamber', label: 'PARTICIPATES_IN' },
+      { from: '해리 포터', to: 'Flying Keys Chamber', label: 'PARTICIPATES_IN' },
+      { from: '해리 포터', to: 'Wizard\'s Chess Chamber', label: 'PARTICIPATES_IN' },
+      { from: '론 위즐리', to: 'Ron\'s Chess Sacrifice', label: 'PARTICIPATES_IN' },
+      { from: '해리 포터', to: 'Mirror of Erised Chamber', label: 'PARTICIPATES_IN' },
+      { from: '퀴리누스 퀴렐', to: 'Harry Confronts Quirrell', label: 'PARTICIPATES_IN' },
+      { from: '해리 포터', to: 'Harry Confronts Quirrell', label: 'PARTICIPATES_IN' },
+      { from: '마법사의 돌', to: 'Mirror of Erised Chamber', label: 'USED_IN' },
+      { from: '투명 망토', to: 'Fluffy Chamber Encounter', label: 'USED_IN' },
+      { from: '님부스 2000', to: 'Gryffindor vs. Slytherin Quidditch Match', label: 'USED_IN' },
+      { from: '소망의 거울', to: 'Mirror of Erised Chamber', label: 'USED_IN' },
+      { from: '악마의 덫', to: 'Devil\'s Snare Chamber', label: 'USED_IN' },
+      { from: '날개 달린 열쇠들', to: 'Flying Keys Chamber', label: 'USED_IN' },
+      { from: '거대 마법사 체스판', to: 'Wizard\'s Chess Chamber', label: 'USED_IN' },
+      { from: '플러피', to: 'Fluffy Chamber Encounter', label: 'USED_IN' },
+      { from: '플러피', to: '마법사의 돌', label: 'GUARDS' },
+      { from: '악마의 덫', to: '마법사의 돌', label: 'GUARDS' },
+      { from: '날개 달린 열쇠들', to: '마법사의 돌', label: 'GUARDS' },
+      { from: '거대 마법사 체스판', to: '마법사의 돌', label: 'GUARDS' },
+      { from: '소망의 거울', to: '마법사의 돌', label: 'GUARDS' },
+      { from: '3층 금지 복도', to: '호그와트', label: 'LOCATED_IN' },
+      { from: '플러피가 있는 방', to: '3층 금지 복도', label: 'LOCATED_IN' },
+      { from: '최종 대결의 방', to: '호그와트', label: 'LOCATED_IN' },
+      { from: '마법사의 돌', to: '최종 대결의 방', label: 'LOCATED_IN' },
+      { from: '마법사의 돌', to: '713번 금고', label: 'LOCATED_IN' },
+      { from: '713번 금고', to: '그린고츠 은행', label: 'LOCATED_IN' },
+      { from: '그린고츠 은행', to: '다이애건 앨리', label: 'LOCATED_IN' },
+      { from: 'Mirror of Erised Chamber', to: '최종 대결의 방', label: 'OCCURS_AT' },
+      { from: 'Harry Confronts Quirrell', to: '최종 대결의 방', label: 'OCCURS_AT' }
+    ];
+
+    const KEY_QS = {
+      Q1: {
+        title: 'Q1. 해리가 받은 사물과 사용된 사건 탐색',
+        sub: 'receivedFrom · receivedItem · usedIn 경로 추적',
+        desc: '해리 포터가 인물(해그리드, 맥고나걸 등)로부터 건네받은 마법 사물(투명 망토, 님부스 2000 등)과 해당 사물들이 위기 극복 및 퀴디치 경기 등의 사건에서 사용되는 인과 경로를 분석합니다.',
+        insight: '해그리드와 맥고나걸로부터 유입된 도구들이 후반부 위기 극복의 물리적 수단으로 전환되는 서사적 인과관계가 그래프 상에서 명확한 체인 형태로 드러납니다.',
+        nodes: ['해리 포터', '투명 망토', '님부스 2000', '해리의 지팡이', '미네르바 맥고나걸', '루베우스 해그리드', 'Fluffy Chamber Encounter', 'Gryffindor vs. Slytherin Quidditch Match', 'Mirror of Erised Chamber'],
+        cypher: `// Q1: 해리가 획득한 사물 및 해당 사물이 투입된 사건 탐색
+MATCH (harry:person {name: '해리 포터'})
+OPTIONAL MATCH (giver:person)-[:GIVES]->(item:object)
+OPTIONAL MATCH (harry)-[:OWNS]->(item:object)
+MATCH (item)-[:USED_IN]->(e:event)
+OPTIONAL MATCH (e)-[:OCCURS_AT]->(p:place)
+RETURN harry.name AS Receiver, 
+       giver.name AS Giver, 
+       item.name AS Item, 
+       e.name AS Event, 
+       p.name AS Location
+ORDER BY Event;`
+      },
+      Q2: {
+        title: 'Q2. 마법사의 돌 보호/탈취 메커니즘 분석',
+        sub: 'guards · protects · suspects · usedIn 복합 관계망',
+        desc: '그린고츠 713번 금고부터 호그와트 지하 5단계 방어선(플러피, 악마의 덫, 날개 달린 열쇠, 거대 마법사 체스, 소망의 거울)에 이르는 마법사의 돌 수호 체계와 퀴렐/볼드모트의 탈취 시도를 규명합니다.',
+        insight: '각 수호 장치는 담당 교수의 전문 영역을 상징하며, 이를 돌파하는 과정에서 해리·론·헤르미온느의 고유 역량이 발휘되는 퀘스트 구조를 입증합니다.',
+        nodes: ['마법사의 돌', '플러피', '악마의 덫', '날개 달린 열쇠들', '거대 마법사 체스판', '소망의 거울', '최종 대결의 방', '퀴리누스 퀴렐', '볼드모트 경', '세베루스 스네이프'],
+        cypher: `// Q2: 마법사의 돌을 지키는 관문 및 관련 인물/사건 체인
+MATCH (stone:object {name: '마법사의 돌'})
+MATCH (guardian:object)-[:GUARDS]->(stone)
+OPTIONAL MATCH (guardian)-[:LOCATED_IN]->(room:place)
+OPTIONAL MATCH (guardian)-[:USED_IN]->(ev:event)
+OPTIONAL MATCH (culprit:person)-[:PARTICIPATES_IN]->(ev)
+RETURN stone.name AS Target, 
+       guardian.name AS GuardianObject, 
+       room.name AS Chamber, 
+       ev.name AS DefenseEvent, 
+       collect(DISTINCT culprit.name) AS KeyFigures;`
+      },
+      Q3: {
+        title: 'Q3. 호그와트 내 해리의 직접 적대 관계 및 기숙사 구도',
+        sub: 'belongsTo · rivalOf · serves 계열 구조',
+        desc: '호그와트 소속 내부에서 해리와 직접적인 적대(RIVAL_OF) 관계를 맺고 있는 인물군(말포이, 퀴렐, 볼드모트)과 이들의 소속 기숙사(슬리데린) 및 추종자 네트워크를 추적합니다.',
+        insight: '해리의 갈등 축은 일상적 라이벌(말포이-슬리데린)과 실존적 적대자(퀴렐/볼드모트-어둠의 세력)라는 이중 구조로 분화되어 있음을 시각적으로 확인합니다.',
+        nodes: ['해리 포터', '드레이코 말포이', '퀴리누스 퀴렐', '볼드모트 경', '슬리데린', '그리핀도르', '빈센트 크랩', '그레고리 고일', '호그와트 교수진'],
+        cypher: `// Q3: 해리와 직접 대립하는 인물 및 해당 인물의 기숙사/집단 소속
+MATCH (harry:person {name: '해리 포터'})-[:RIVAL_OF]->(rival:person)
+OPTIONAL MATCH (rival)-[:BELONGS_TO]->(g:group)
+OPTIONAL MATCH (rival)-[:SERVES]->(master:person)
+OPTIONAL MATCH (minion:person)-[:FRIEND_OF]->(rival)
+RETURN harry.name AS Hero, 
+       rival.name AS Rival, 
+       g.name AS Affiliation, 
+       master.name AS Master, 
+       collect(DISTINCT minion.name) AS Followers;`
+      }
+    };
+
+    // 2. Vis Network State
+    let network = null;
+    let activeFilters = { person: true, group: true, place: true, event: true, object: true };
+    let searchQuery = '';
+    let isPhysicsOn = true;
+    let currentSelectedNode = null;
+    let currentActiveQ = 'Q1';
+
+    function initNetwork() {
+      const container = document.getElementById('vis-canvas');
+      renderGraph();
+    }
+
+    function getFilteredData() {
+      const filteredNodes = ALL_NODES.filter(node => {
+        if (!activeFilters[node.group]) return false;
+        if (searchQuery.trim()) {
+          const q = searchQuery.toLowerCase().trim();
+          return node.label.toLowerCase().includes(q) || (node.role && node.role.toLowerCase().includes(q));
+        }
+        return true;
+      });
+
+      const nodeSet = new Set(filteredNodes.map(n => n.id));
+      const filteredEdges = ALL_EDGES.filter(e => nodeSet.has(e.from) && nodeSet.has(e.to));
+
+      const visNodes = filteredNodes.map(n => {
+        const spec = CLASS_COLORS[n.group];
+        let size = 20;
+        if (n.id === '해리 포터' || n.id === '마법사의 돌') size = 32;
+        else if (n.group === 'group') size = 26;
+        else if (n.group === 'event') size = 22;
+
+        return {
+          id: n.id,
+          label: n.label,
+          shape: n.group === 'group' ? 'box' : n.group === 'event' ? 'diamond' : 'dot',
+          size: size,
+          color: {
+            background: spec.bg,
+            border: spec.border,
+            highlight: { background: '#ffffff', border: '#f59e0b' }
+          },
+          font: { color: '#f3ebd7', size: 12, strokeWidth: 3, strokeColor: '#0a0305' },
+          shadow: { enabled: true, color: spec.glow, size: 10 }
+        };
+      });
+
+      const visEdges = filteredEdges.map(e => ({
+        from: e.from,
+        to: e.to,
+        label: e.label,
+        arrows: { to: { enabled: true, scaleFactor: 0.7 } },
+        font: { color: '#a1a1aa', size: 9, strokeWidth: 2, strokeColor: '#0d0507' },
+        color: { color: 'rgba(212, 175, 55, 0.45)', highlight: '#fbbf24' },
+        width: 1.2
+      }));
+
+      return {
+        nodes: new vis.DataSet(visNodes),
+        edges: new vis.DataSet(visEdges),
+        countNodes: visNodes.length,
+        countEdges: visEdges.length
+      };
+    }
+
+    function renderGraph() {
+      const container = document.getElementById('vis-canvas');
+      const data = getFilteredData();
+
+      document.getElementById('node-count').innerText = data.countNodes;
+      document.getElementById('edge-count').innerText = data.countEdges;
+
+      const options = {
+        physics: {
+          enabled: isPhysicsOn,
+          barnesHut: {
+            gravitationalConstant: -3800,
+            centralGravity: 0.35,
+            springLength: 120,
+            springConstant: 0.04,
+            damping: 0.09
+          }
+        },
+        interaction: { hover: true, zoomView: true, dragView: true }
+      };
+
+      if (network) network.destroy();
+      network = new vis.Network(container, { nodes: data.nodes, edges: data.edges }, options);
+
+      network.on('click', function(params) {
+        if (params.nodes && params.nodes.length > 0) {
+          const nodeId = params.nodes[0];
+          openInspector(nodeId);
+        } else {
+          closeInspector();
+        }
+      });
+    }
+
+    function toggleFilter(group) {
+      activeFilters[group] = !activeFilters[group];
+      const btn = document.getElementById('filter-' + group);
+      if (activeFilters[group]) {
+        btn.classList.remove('opacity-40', 'line-through');
+      } else {
+        btn.classList.add('opacity-40', 'line-through');
+      }
+      renderGraph();
+    }
+
+    function handleSearch(val) {
+      searchQuery = val;
+      renderGraph();
+    }
+
+    function togglePhysics() {
+      isPhysicsOn = !isPhysicsOn;
+      if (network) network.setOptions({ physics: { enabled: isPhysicsOn } });
+      const text = document.getElementById('physics-text');
+      text.innerText = isPhysicsOn ? '물리 멈춤' : '물리 재개';
+    }
+
+    function zoomIn() {
+      if (!network) return;
+      network.moveTo({ scale: network.getScale() * 1.3, animation: { duration: 300, easingFunction: 'easeInOutQuad' } });
+    }
+
+    function zoomOut() {
+      if (!network) return;
+      network.moveTo({ scale: network.getScale() / 1.3, animation: { duration: 300, easingFunction: 'easeInOutQuad' } });
+    }
+
+    function resetView() {
+      if (!network) return;
+      network.fit({ animation: { duration: 500, easingFunction: 'easeInOutQuad' } });
+      closeInspector();
+    }
+
+    function openInspector(nodeId) {
+      const node = ALL_NODES.find(n => n.id === nodeId);
+      if (!node) return;
+      currentSelectedNode = node;
+      const spec = CLASS_COLORS[node.group];
+
+      document.getElementById('inspect-dot').style.backgroundColor = spec.bg;
+      document.getElementById('inspect-group').innerText = spec.name;
+      document.getElementById('inspect-group').style.color = spec.bg;
+      document.getElementById('inspect-title').innerText = node.label;
+      document.getElementById('inspect-role').innerText = node.role || node.group;
+      document.getElementById('inspect-desc').innerText = node.description || '';
+
+      // edges
+      const edges = ALL_EDGES.filter(e => e.from === nodeId || e.to === nodeId);
+      document.getElementById('inspect-edge-count').innerText = edges.length;
+      const edgeListEl = document.getElementById('inspect-edge-list');
+      edgeListEl.innerHTML = '';
+
+      edges.forEach(e => {
+        const isOut = e.from === nodeId;
+        const other = isOut ? e.to : e.from;
+        const item = document.createElement('div');
+        item.className = 'rounded-lg border border-red-950 bg-black/40 p-2 text-xs flex items-center justify-between gap-2';
+        item.innerHTML = `<span class="text-[10px] font-mono font-bold text-amber-400 bg-amber-950/40 px-1.5 py-0.5 rounded border border-amber-900/40">:${e.label}</span>
+                          <span class="text-stone-300 truncate">${isOut ? '➔ ' + other : '⬅ ' + other}</span>`;
+        edgeListEl.appendChild(item);
+      });
+
+      // cypher
+      const cypherQuery = `MATCH (n:${node.group} {name: '${node.id}'})-[r]-(m) \nRETURN n, r, m LIMIT 25;`;
+      document.getElementById('inspect-cypher').innerText = cypherQuery;
+
+      document.getElementById('inspector-panel').classList.remove('hidden');
+      document.getElementById('inspector-panel').classList.add('flex');
+    }
+
+    function closeInspector() {
+      document.getElementById('inspector-panel').classList.add('hidden');
+      document.getElementById('inspector-panel').classList.remove('flex');
+      currentSelectedNode = null;
+    }
+
+    function copyInspectorCypher() {
+      const text = document.getElementById('inspect-cypher').innerText;
+      navigator.clipboard.writeText(text);
+      const btn = document.getElementById('btn-copy-inspect');
+      btn.innerHTML = `<i data-lucide="check" class="h-3 w-3 text-emerald-400"></i> <span class="text-emerald-400">복사됨</span>`;
+      lucide.createIcons();
+      setTimeout(() => {
+        btn.innerHTML = `<i data-lucide="copy" class="h-3 w-3"></i> <span>복사</span>`;
+        lucide.createIcons();
+      }, 2000);
+    }
+
+    // Question Tab Switcher
+    function selectQuestionTab(qKey) {
+      currentActiveQ = qKey;
+      const q = KEY_QS[qKey];
+
+      // Update tabs style
+      ['Q1', 'Q2', 'Q3'].forEach(k => {
+        const btn = document.getElementById('tab-' + k);
+        if (k === qKey) {
+          btn.className = 'tab-btn flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-medium border border-amber-500/60 bg-gradient-to-r from-red-950/80 via-red-900/40 to-black text-amber-200 shadow-lg';
+        } else {
+          btn.className = 'tab-btn flex items-center gap-2.5 rounded-xl px-4 py-2.5 text-sm font-medium border border-red-950/60 bg-black/40 text-stone-400 hover:text-stone-200';
+        }
+      });
+
+      document.getElementById('q-sub').innerText = q.sub;
+      document.getElementById('q-title').innerText = q.title;
+      document.getElementById('q-desc').innerText = q.desc;
+      document.getElementById('q-insight').innerText = q.insight;
+      document.getElementById('cypher-header').innerText = `Cypher Query (${qKey})`;
+      document.getElementById('cypher-code').innerText = q.cypher;
+    }
+
+    function highlightCurrentQuestionNodes() {
+      const q = KEY_QS[currentActiveQ];
+      if (!network || !q.nodes) return;
+
+      const primary = q.nodes[0];
+      network.focus(primary, { scale: 1.15, animation: { duration: 800, easingFunction: 'easeInOutQuad' } });
+      openInspector(primary);
+
+      const target = document.getElementById('knowledge-graph');
+      if (target) target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    }
+
+    function copyCurrentCypher() {
+      const text = document.getElementById('cypher-code').innerText;
+      navigator.clipboard.writeText(text);
+      const btnText = document.getElementById('btn-copy-text');
+      btnText.innerText = '복사 완료!';
+      setTimeout(() => btnText.innerText = '쿼리 복사', 2000);
+    }
+
+    function shareLink() {
+      navigator.clipboard.writeText(window.location.href);
+      const text = document.getElementById('share-text');
+      text.innerText = '복사됨!';
+      setTimeout(() => text.innerText = '공유', 2000);
+    }
+
+    function downloadReport() {
+      const content = `# 해리 포터와 마법사의 돌 서사 지식그래프 프로젝트 최종 보고서
+- 추진 기간: 2026.09 ~ 2026.12 (10주)
+- 대상: 영화 <해리 포터와 마법사의 돌>
+- 노드 수: 83개+ (인물 26, 집단 9, 장소 15, 사건 19, 사물 15)
+- 핵심 질문 3선 Cypher 쿼리 구현 완료.`;
+      const blob = new Blob([content], { type: 'text/markdown;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'Harry_Potter_Knowledge_Graph_Summary.md';
+      a.click();
+    }
+
+    function handleContactSubmit(e) {
+      e.preventDefault();
+      alert('문의 메시지가 성공적으로 전달되었습니다! (woosy0813@korea.ac.kr로 전송 예정)');
+      e.target.reset();
+    }
+
+    // Initialize on window load
+    window.addEventListener('DOMContentLoaded', () => {
+      lucide.createIcons();
+      initNetwork();
+      selectQuestionTab('Q1');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,6 @@
+{
+  "name": "Harry Potter Knowledge Graph Archive",
+  "description": "Neo4j & vis-network 기반 <해리 포터와 마법사의 돌> 서사 지식그래프 인터랙티브 포트폴리오 아카이브",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

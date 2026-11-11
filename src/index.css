@@ -1,0 +1,28 @@
+@import "tailwindcss";
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    font-family: 'Noto Serif KR', serif;
+  }
+  
+  h1, h2, h3, h4, .font-serif {
+    font-family: 'Cinzel', 'Noto Serif KR', serif;
+  }
+}
+
+/* Custom scrollbar for dark gothic theme */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #090204;
+}
+::-webkit-scrollbar-thumb {
+  background: #3a111a;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #7a1f2e;
+}
